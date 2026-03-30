@@ -1,0 +1,51 @@
+{% extends 'main/base_student.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+{% block page_title %}Личный кабинет{% endblock %}
+{% block page_subtitle %}Информация о студенте{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="profile-grid">
+        <div class="profile-item">
+            <span class="profile-label">Фамилия</span>
+            <span class="profile-value">{{ student.Student }}</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label">Имя</span>
+            <span class="profile-value">{{ student.Name }}</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label">Дата рождения</span>
+            <span class="profile-value">{{ student.DateBorn|default:"Не указано" }}</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label">Пол</span>
+            <span class="profile-value">{{ student.Gender|default:"Не указано" }}</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label">Форма обучения</span>
+            <span class="profile-value">{{ student.StudyForm|default:"Не указано" }}</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label">Группа</span>
+            <span class="profile-value">{{ student.GroupID.Group|default:"Не указано" }}</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label">Регион</span>
+            <span class="profile-value">{{ student.RegionID.Region|default:"Не указано" }}</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label">Логин</span>
+            <span class="profile-value">{{ login }}</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

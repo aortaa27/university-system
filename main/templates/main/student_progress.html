@@ -1,0 +1,81 @@
+{% extends 'main/base_student.html' %}
+
+{% block title %}Успеваемость{% endblock %}
+{% block page_title %}Успеваемость{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+    <p style="margin-bottom: 10px; font-weight: 500;">
+        Текущий семестр: {{ current_semester }}
+    </p>
+
+    <form method="get" class="filters-form">
+        <div class="filters-row">
+
+            <div class="filter-group">
+                <label for="semester">Семестр</label>
+                <select name="semester" id="semester">
+                    {% for sem in semesters %}
+                        <option value="{{ sem }}"
+                            {% if selected_semester == sem|stringformat:"s" %}selected{% endif %}>
+                            {{ sem }} семестр
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="subject">Предмет</label>
+                <select name="subject" id="subject">
+                    <option value="">Все предметы</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}"
+                            {% if selected_subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                            {{ subject.Subject }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group filter-btn-group">
+                <button type="submit">Применить</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<div class="card mt-20">
+    {% if progress_rows %}
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    <th>1 модуль</th>
+                    <th>2 модуль</th>
+                    <th>Экзамен</th>
+                    <th>Итог</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in progress_rows %}
+                <tr>
+                    <td>{{ row.subject.Subject }}</td>
+                    <td>{{ row.module_1|default:"-" }}</td>
+                    <td>{{ row.module_2|default:"-" }}</td>
+                    <td>{{ row.exam|default:"-" }}</td>
+                    <td>{{ row.final|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-text">
+            По выбранным фильтрам данных нет.
+        </p>
+    {% endif %}
+</div>
+
+{% endblock %}

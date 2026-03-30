@@ -1,0 +1,118 @@
+{% extends 'main/base_student.html' %}
+
+{% block title %}Сканирование QR{% endblock %}
+{% block page_title %}QR-отметка посещаемости{% endblock %}
+{% block page_subtitle %}Наведите заднюю камеру на QR-код аудитории{% endblock %}
+
+{% block content %}
+<div class="card">
+    <p><strong>Предмет:</strong> {{ schedule.LectureID.SubjectID.Subject }}</p>
+    <p><strong>Группа:</strong> {{ schedule.LectureID.GroupID.Group }}</p>
+    <p><strong>Аудитория:</strong> {{ schedule.Room }}</p>
+    <p><strong>Время:</strong> {{ schedule.StartTime }} - {{ schedule.EndTime }}</p>
+</div>
+
+<div class="card mt-20">
+    <div id="reader" style="width: 100%; max-width: 420px; margin: 0 auto;"></div>
+    <p id="qr-result" class="empty-text" style="font-size:18px; font-weight:600;">Ожидание сканирования...</p>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+    let alreadyScanned = false;
+    let html5QrCode = new Html5Qrcode("reader");
+
+    function sendQrToken(token) {
+        fetch("{% url 'qr_submit' schedule.id %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                qr_token: token
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultBlock = document.getElementById("qr-result");
+            resultBlock.innerText = data.message;
+
+            if (data.success) {
+                resultBlock.style.color = "green";
+                html5QrCode.stop().catch(() => {});
+            } else {
+                resultBlock.style.color = "red";
+                alreadyScanned = false;
+            }
+        })
+        .catch(() => {
+            const resultBlock = document.getElementById("qr-result");
+            resultBlock.innerText = "Ошибка отправки данных.";
+            resultBlock.style.color = "red";
+            alreadyScanned = false;
+        });
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        if (alreadyScanned) return;
+        alreadyScanned = true;
+        document.getElementById("qr-result").innerText = "QR считан: " + decodedText;
+        sendQrToken(decodedText);
+    }
+
+    function onScanFailure(error) {
+    }
+
+    function startBackCamera() {
+        html5QrCode.start(
+            { facingMode: { exact: "environment" } },
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            onScanSuccess,
+            onScanFailure
+        ).catch(() => {
+            html5QrCode.start(
+                { facingMode: "environment" },
+                {
+                    fps: 10,
+                    qrbox: 250
+                },
+                onScanSuccess,
+                onScanFailure
+            ).catch(() => {
+                Html5Qrcode.getCameras().then(devices => {
+                    if (devices && devices.length) {
+                        const backCamera =
+                            devices.find(device =>
+                                device.label.toLowerCase().includes("back") ||
+                                device.label.toLowerCase().includes("rear") ||
+                                device.label.toLowerCase().includes("environment")
+                            ) || devices[devices.length - 1];
+
+                        html5QrCode.start(
+                            backCamera.id,
+                            {
+                                fps: 10,
+                                qrbox: 250
+                            },
+                            onScanSuccess,
+                            onScanFailure
+                        );
+                    } else {
+                        document.getElementById("qr-result").innerText = "Камера не найдена.";
+                        document.getElementById("qr-result").style.color = "red";
+                    }
+                }).catch(() => {
+                    document.getElementById("qr-result").innerText = "Нет доступа к камере.";
+                    document.getElementById("qr-result").style.color = "red";
+                });
+            });
+        });
+    }
+
+    startBackCamera();
+</script>
+{% endblock %}

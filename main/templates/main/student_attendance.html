@@ -1,0 +1,139 @@
+{% extends 'main/base_student.html' %}
+
+{% block title %}Посещаемость{% endblock %}
+{% block page_title %}Посещаемость{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+    <p style="margin-bottom: 10px; font-weight: 500;">
+        Текущий семестр: {{ current_semester }}
+    </p>
+
+    <form method="get" class="filters-form">
+        <div class="filters-row">
+
+            <!-- СЕМЕСТР -->
+            <div class="filter-group">
+                <label for="semester">Семестр</label>
+                <select name="semester" id="semester">
+                    {% for sem in semesters %}
+                        <option value="{{ sem }}"
+                            {% if selected_semester == sem|stringformat:"s" %}selected{% endif %}>
+                            {{ sem }} семестр
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- ПРЕДМЕТ -->
+            <div class="filter-group">
+                <label for="subject">Предмет</label>
+                <select name="subject" id="subject">
+                    <option value="">Все предметы</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}"
+                            {% if selected_subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                            {{ subject.Subject }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- СТАТУС -->
+            <div class="filter-group">
+                <label for="status">Статус</label>
+                <select name="status" id="status">
+                    <option value="">Все</option>
+                    <option value="present" {% if selected_status == "present" %}selected{% endif %}>
+                        Присутствовал
+                    </option>
+                    <option value="absent" {% if selected_status == "absent" %}selected{% endif %}>
+                        Отсутствовал
+                    </option>
+                    <option value="late" {% if selected_status == "late" %}selected{% endif %}>
+                        Опоздал
+                    </option>
+                </select>
+            </div>
+
+            <!-- ДАТА С -->
+            <div class="filter-group">
+                <label for="date_from">С даты</label>
+                <input type="date" name="date_from" id="date_from" value="{{ date_from }}">
+            </div>
+
+            <!-- ДАТА ПО -->
+            <div class="filter-group">
+                <label for="date_to">По дату</label>
+                <input type="date" name="date_to" id="date_to" value="{{ date_to }}">
+            </div>
+
+            <!-- КНОПКА -->
+            <div class="filter-group filter-btn-group">
+                <button type="submit">Применить</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<div class="card mt-20">
+
+    {% if attendance_list %}
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Время</th>
+                    <th>Предмет</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for item in attendance_list %}
+                <tr>
+                    <td>{{ item.LessonDate|date:"d.m.Y" }}</td>
+
+                    <td>
+                        {{ item.ScheduleID.StartTime|time:"H:i" }} - {{ item.ScheduleID.EndTime|time:"H:i" }}
+                    </td>
+
+                    <td>
+                        {{ item.ScheduleID.LectureID.SubjectID.Subject }}
+                    </td>
+
+                    <td>
+                        {% if item.Status == "present" %}
+                            <span style="color: green; font-weight: 600;">
+                                {{ item.get_Status_display }}
+                            </span>
+                        {% elif item.Status == "absent" %}
+                            <span style="color: red; font-weight: 600;">
+                                {{ item.get_Status_display }}
+                            </span>
+                        {% elif item.Status == "late" %}
+                            <span style="color: orange; font-weight: 600;">
+                                {{ item.get_Status_display }}
+                            </span>
+                        {% else %}
+                            {{ item.get_Status_display }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    {% else %}
+        <p class="empty-text">
+            По выбранным фильтрам данных нет.
+        </p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Студент{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'main/style.css' %}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="logo">University System</div>
+    <nav class="nav">
+    <a href="{% url 'student_schedule' %}" class="{% if active_page == 'schedule' %}active{% endif %}">Расписание</a>
+    <a href="{% url 'student_progress' %}" class="{% if active_page == 'progress' %}active{% endif %}">Успеваемость</a>
+    <a href="{% url 'student_attendance' %}" class="{% if active_page == 'attendance' %}active{% endif %}">Посещаемость</a>
+    <a href="{% url 'student_profile' %}" class="{% if active_page == 'profile' %}active{% endif %}">Личный кабинет</a>
+</nav>
+        <div class="user-box">
+            <span>{{ login }}</span>
+            <a class="logout-btn" href="{% url 'logout' %}">Выйти</a>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <div class="page-header">
+            <h1>{% block page_title %}{% endblock %}</h1>
+            <p>{% block page_subtitle %}{% endblock %}</p>
+        </div>
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

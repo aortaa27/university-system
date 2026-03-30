@@ -1,0 +1,449 @@
+/* =========================
+   БАЗА
+========================= */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+    color: #1f2937;
+}
+
+/* =========================
+   СТРАНИЦА ВХОДА
+========================= */
+.login-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #dbeafe, #eff6ff);
+}
+
+.login-card {
+    width: 380px;
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.login-card h1 {
+    margin: 0 0 8px 0;
+    text-align: center;
+    color: #111827;
+}
+
+.subtitle {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 25px;
+}
+
+.login-card label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #374151;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #1f2937;
+    background: #ffffff;
+}
+
+.login-card input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.login-card button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.login-card button:hover {
+    background: #1d4ed8;
+}
+
+.error-message {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+/* =========================
+   ВЕРХНЯЯ ПАНЕЛЬ
+========================= */
+.topbar {
+    height: 70px;
+    background: #ffffff;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.nav {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #374151;
+    padding: 10px 14px;
+    border-radius: 10px;
+    transition: 0.2s;
+    font-weight: 500;
+}
+
+.nav a:hover,
+.nav a.active {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.user-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logout-btn {
+    text-decoration: none;
+    background: #ef4444;
+    color: white;
+    padding: 9px 14px;
+    border-radius: 10px;
+    transition: 0.2s;
+    font-weight: 600;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+/* =========================
+   КОНТЕЙНЕР И ЗАГОЛОВКИ
+========================= */
+.page-container {
+    max-width: 1100px;
+    margin: 35px auto;
+    padding: 0 20px;
+}
+
+.page-header h1 {
+    margin: 0 0 6px 0;
+    color: #111827;
+}
+
+.page-header p {
+    color: #6b7280;
+    margin-bottom: 25px;
+}
+
+/* =========================
+   КАРТОЧКИ
+========================= */
+.card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+/* =========================
+   СООБЩЕНИЯ
+========================= */
+.success-message {
+    background: #dcfce7;
+    color: #166534;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #bbf7d0;
+}
+
+.empty-text {
+    color: #6b7280;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 14px;
+}
+
+/* =========================
+   ФИЛЬТРЫ
+========================= */
+.filters-form {
+    width: 100%;
+}
+
+.filters-row {
+    display: flex;
+    gap: 16px;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+}
+
+.filter-group label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #374151;
+    font-size: 14px;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 11px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #ffffff;
+    font-size: 14px;
+    color: #1f2937;
+    box-sizing: border-box;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.filter-btn-group button {
+    padding: 12px 20px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.filter-btn-group button:hover {
+    background: #1d4ed8;
+}
+
+.large-filter {
+    min-width: 420px;
+}
+
+/* =========================
+   ОБЫЧНЫЕ ТАБЛИЦЫ
+========================= */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.styled-table thead th {
+    background: #eff6ff;
+    color: #1d4ed8;
+    text-align: left;
+    padding: 14px;
+    font-weight: 700;
+    border-bottom: 1px solid #dbeafe;
+}
+
+.styled-table td {
+    padding: 14px;
+    border-top: 1px solid #e5e7eb;
+    color: #1f2937;
+    background: #ffffff;
+}
+
+.styled-table tbody tr:hover td {
+    background: #f9fafb;
+}
+
+/* =========================
+   ЖУРНАЛ / ИНФО-БЛОКИ
+========================= */
+.journal-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.journal-info p {
+    margin: 0;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+    color: #1f2937;
+    border: 1px solid #e5e7eb;
+}
+
+.journal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.journal-actions button {
+    padding: 12px 22px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.journal-actions button:hover {
+    background: #1d4ed8;
+}
+
+/* =========================
+   ПРОФИЛЬ
+========================= */
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.profile-item {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.profile-label {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.profile-value {
+    font-size: 17px;
+    color: #111827;
+    font-weight: 700;
+}
+
+/* =========================
+   QR КНОПКА
+========================= */
+.qr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    transition: 0.2s;
+}
+
+.qr-btn:hover {
+    background: #bfdbfe;
+}
+
+/* =========================
+   АДАПТИВ
+========================= */
+@media (max-width: 900px) {
+    .topbar {
+        height: auto;
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .user-box {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .large-filter {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-container {
+        padding: 0 14px;
+        margin: 20px auto;
+    }
+
+    .card {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        min-width: 100%;
+    }
+
+    .styled-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .styled-table thead th,
+    .styled-table td {
+        padding: 12px;
+    }
+
+    .login-card {
+        width: calc(100% - 32px);
+        padding: 24px;
+    }
+}

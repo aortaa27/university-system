@@ -1,0 +1,94 @@
+{% extends 'main/base_teacher.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+{% block page_title %}Личный кабинет{% endblock %}
+{% block page_subtitle %}Информация о преподавателе{% endblock %}
+
+{% block content %}
+<div class="card profile-card">
+    <div class="profile-grid">
+        <div class="profile-item">
+            <span class="profile-label">ФИО</span>
+            <span class="profile-value">{{ teacher.Teacher }}</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label">Адрес</span>
+            <span class="profile-value">{{ teacher.Address|default:"Не указано" }}</span>
+        </div>
+
+        <div class="profile-item">
+            <span class="profile-label">Логин</span>
+            <span class="profile-value">{{ login }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-20 profile-card">
+    <h3 class="section-title">Закрепленные занятия</h3>
+
+    {% if teacher_lectures %}
+        <table class="styled-table teacher-profile-table">
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    <th>Группа</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in teacher_lectures %}
+                <tr>
+                    <td>{{ item.SubjectID.Subject }}</td>
+                    <td>{{ item.GroupID.Group }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-text">Занятия пока не назначены.</p>
+    {% endif %}
+</div>
+
+<style>
+.profile-card {
+    border: 1px solid #e5e7eb;
+}
+
+.section-title {
+    margin: 0 0 16px 0;
+    font-size: 20px;
+    color: #1f2937;
+}
+
+.teacher-profile-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+.teacher-profile-table thead th {
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    text-align: left;
+    padding: 14px;
+    font-weight: 700;
+    border-bottom: 1px solid #dbeafe;
+}
+
+.teacher-profile-table td {
+    color: #1f2937 !important;
+    padding: 14px;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.teacher-profile-table tbody tr:hover td {
+    background: #f9fafb;
+}
+
+.teacher-profile-table th,
+.teacher-profile-table td {
+    opacity: 1 !important;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'main/base_student.html' %}
+
+{% block title %}Расписание студента{% endblock %}
+{% block page_title %}Расписание{% endblock %}
+
+
+{% block content %}
+<div class="card">
+    <p style="margin-bottom: 10px; font-weight: 500;">
+        Текущий семестр: {{ current_semester }}
+    </p>
+
+    <form method="get" class="filters-form">
+        <div class="filters-row">
+
+            <div class="filter-group">
+                <label for="semester">Семестр</label>
+                <select name="semester" id="semester">
+                    {% for sem in semesters %}
+                        <option value="{{ sem }}" {% if selected_semester == sem|stringformat:"s" %}selected{% endif %}>
+                            {{ sem }} семестр
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="day">День недели</label>
+                <select name="day" id="day">
+                    <option value="">Все дни</option>
+                    {% for key, value in day_choices %}
+                        <option value="{{ key }}" {% if selected_day == key %}selected{% endif %}>
+                            {{ value }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group filter-btn-group">
+                <button type="submit">Применить</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<div class="card mt-20">
+    {% if schedules %}
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    <th>Время</th>
+                    <th>Аудитория</th>
+                    <th>Тип занятия</th>
+                    <th>QR</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in schedules %}
+                <tr>
+                    <td>{{ item.LectureID.SubjectID.Subject }}</td>
+                    <td>{{ item.StartTime }} - {{ item.EndTime }}</td>
+                    <td>{{ item.Room }}</td>
+                    <td>{{ item.LessonType }}</td>
+                    <td>
+                        <a href="{% url 'scan_qr' item.id %}" class="qr-btn" title="Отметиться по QR">📷</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-text">Расписание по выбранным фильтрам не найдено.</p>
+    {% endif %}
+</div>
+{% endblock %}

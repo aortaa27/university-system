@@ -1,0 +1,119 @@
+{% extends 'main/base_teacher.html' %}
+
+{% block title %}Расписание преподавателя{% endblock %}
+{% block page_title %}Расписание{% endblock %}
+{% block page_subtitle %}Ваши пары по выбранному дню недели и семестру{% endblock %}
+
+{% block content %}
+<div class="card">
+    <p style="margin-bottom: 10px; font-weight: 500;">
+        Текущий семестр: {{ current_semester }}
+    </p>
+
+    <form method="get" class="filters-form" id="teacher-day-form">
+        <div class="filters-row">
+
+            <div class="filter-group">
+                <label for="semester">Семестр</label>
+                <select name="semester" id="semester">
+                    {% for sem in semesters %}
+                        <option value="{{ sem }}" {% if selected_semester == sem|stringformat:"s" %}selected{% endif %}>
+                            {{ sem }} семестр
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="day">День недели</label>
+                <select name="day" id="day">
+
+                    {% for day_key, day_ru in day_choices %}
+                        <option value="{{ day_key }}" {% if selected_day == day_key %}selected{% endif %}>
+                            {{ day_ru }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group filter-btn-group">
+                <button type="submit">Применить</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<div class="card mt-20">
+    {% if schedules %}
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    <th>Группа</th>
+                    <th>День</th>
+                    <th>Время</th>
+                    <th>Аудитория</th>
+                    <th>Тип занятия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in schedules %}
+                <tr>
+                    <td>{{ item.LectureID.SubjectID.Subject }}</td>
+                    <td>{{ item.LectureID.GroupID.Group }}</td>
+                    <td>{{ item.get_DayOfWeek_display }}</td>
+                    <td>{{ item.StartTime }} - {{ item.EndTime }}</td>
+                    <td>{{ item.Room }}</td>
+                    <td>{{ item.LessonType }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-text">По выбранным фильтрам пар нет.</p>
+    {% endif %}
+</div>
+
+<style>
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+.styled-table thead th {
+    background: #f4f8fb !important;
+    color: #1f2937 !important;
+    font-weight: 700;
+    padding: 12px 10px;
+    border-bottom: 2px solid #e5eaf1;
+    text-align: left;
+}
+
+.styled-table td {
+    color: #1f2937 !important;
+    padding: 12px 10px;
+    border-bottom: 1px solid #e5eaf1;
+}
+
+.styled-table tbody tr:hover td {
+    background: #f9fafb;
+}
+
+.styled-table th,
+.styled-table td {
+    opacity: 1 !important;
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid #e5eaf1;
+}
+
+.empty-text {
+    color: #6b7280;
+    font-size: 14px;
+}
+</style>
+{% endblock %}

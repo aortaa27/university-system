@@ -1,0 +1,30 @@
+{% extends 'main/base_teacher.html' %}
+
+{% block title %}Мои занятия{% endblock %}
+{% block page_title %}Мои занятия{% endblock %}
+{% block page_subtitle %}Предметы и группы, которые вы ведете{% endblock %}
+
+{% block content %}
+<div class="card">
+    {% if lectures %}
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    <th>Группа</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in lectures %}
+                <tr>
+                    <td>{{ item.SubjectID.Subject }}</td>
+                    <td>{{ item.GroupID.Group }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty-text">Занятия пока не назначены.</p>
+    {% endif %}
+</div>
+{% endblock %}

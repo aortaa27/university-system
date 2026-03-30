@@ -1,0 +1,178 @@
+{% extends 'main/base_teacher.html' %}
+
+{% block title %}Журнал преподавателя{% endblock %}
+{% block page_title %}Журнал преподавателя{% endblock %}
+{% block page_subtitle %}Выставление оценок студентам{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <form method="get" class="filters-form">
+        <div class="filters-row">
+
+            <div class="filter-group">
+                <label for="semester">Семестр</label>
+                <select name="semester" id="semester">
+                    {% for sem in semesters %}
+                        <option value="{{ sem }}"
+                            {% if selected_semester == sem|stringformat:"s" %}selected{% endif %}>
+                            {{ sem }} семестр
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="group">Группа</label>
+                <select name="group" id="group">
+                    <option value="">Выберите группу</option>
+                    {% for group in groups %}
+                        <option value="{{ group.id }}"
+                            {% if selected_group and selected_group.id == group.id %}selected{% endif %}>
+                            {{ group.Group }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="subject">Предмет</label>
+                <select name="subject" id="subject">
+                    <option value="">Выберите предмет</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}"
+                            {% if selected_subject and selected_subject.id == subject.id %}selected{% endif %}>
+                            {{ subject.Subject }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group filter-btn-group">
+                <button type="submit">Показать</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+{% if messages %}
+    <div class="mt-20">
+        {% for message in messages %}
+            <div class="card" style="margin-bottom: 10px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="card mt-20" style="margin-bottom: 20px;">
+    <p><strong>Статус доступа к полям:</strong></p>
+    <p>1 модуль:
+        {% if module_1_open %}
+            <span style="color: green; font-weight: 600;">Открыт</span>
+        {% else %}
+            <span style="color: red; font-weight: 600;">Закрыт</span>
+        {% endif %}
+    </p>
+    <p>2 модуль:
+        {% if module_2_open %}
+            <span style="color: green; font-weight: 600;">Открыт</span>
+        {% else %}
+            <span style="color: red; font-weight: 600;">Закрыт</span>
+        {% endif %}
+    </p>
+    <p>Экзамен:
+        {% if exam_open %}
+            <span style="color: green; font-weight: 600;">Открыт</span>
+        {% else %}
+            <span style="color: red; font-weight: 600;">Закрыт</span>
+        {% endif %}
+    </p>
+    <p>Итог:
+        {% if final_open %}
+            <span style="color: green; font-weight: 600;">Открыт</span>
+        {% else %}
+            <span style="color: red; font-weight: 600;">Закрыт</span>
+        {% endif %}
+    </p>
+</div>
+
+<div class="card mt-20">
+    {% if students_data %}
+        <form method="post">
+            {% csrf_token %}
+
+            <input type="hidden" name="semester" value="{{ selected_semester }}">
+            <input type="hidden" name="group_id" value="{% if selected_group %}{{ selected_group.id }}{% endif %}">
+            <input type="hidden" name="subject_id" value="{% if selected_subject %}{{ selected_subject.id }}{% endif %}">
+
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Студент</th>
+                        <th>1 модуль</th>
+                        <th>2 модуль</th>
+                        <th>Экзамен</th>
+                        <th>Итог</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in students_data %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ row.student.Student }} {{ row.student.Name }}</td>
+                        <td>
+                            <input
+                                type="text"
+                                name="module_1_{{ row.student.id }}"
+                                value="{{ row.module_1 }}"
+                                style="width: 90px;"
+                                {% if not module_1_open %}disabled{% endif %}
+                            >
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                name="module_2_{{ row.student.id }}"
+                                value="{{ row.module_2 }}"
+                                style="width: 90px;"
+                                {% if not module_2_open %}disabled{% endif %}
+                            >
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                name="exam_{{ row.student.id }}"
+                                value="{{ row.exam }}"
+                                style="width: 90px;"
+                                {% if not exam_open %}disabled{% endif %}
+                            >
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                name="final_{{ row.student.id }}"
+                                value="{{ row.final }}"
+                                style="width: 90px;"
+                                {% if not final_open %}disabled{% endif %}
+                            >
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div style="margin-top: 20px;">
+                <button type="submit">Сохранить журнал</button>
+            </div>
+        </form>
+    {% else %}
+        <p class="empty-text">
+            Выберите группу и предмет, чтобы открыть журнал.
+        </p>
+    {% endif %}
+</div>
+
+{% endblock %}

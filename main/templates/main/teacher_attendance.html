@@ -1,0 +1,291 @@
+{% extends 'main/base_teacher.html' %}
+
+{% block title %}Посещаемость{% endblock %}
+{% block page_title %}Посещаемость{% endblock %}
+{% block page_subtitle %}Отметка посещаемости по группе, дате и занятию{% endblock %}
+
+{% block content %}
+<div class="card attendance-card">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="success-message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if groups %}
+        <form method="get" class="filters-form attendance-filters">
+            <div class="filters-row attendance-filters-row">
+
+                <div class="filter-group attendance-filter-group">
+                    <label for="semester">Семестр</label>
+                    <select name="semester" id="semester" onchange="this.form.submit()">
+                        {% for sem in semesters %}
+                            <option value="{{ sem }}"
+                                {% if selected_semester == sem|stringformat:"s" %}selected{% endif %}>
+                                {{ sem }} семестр
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group attendance-filter-group">
+                    <label for="group">Группа</label>
+                    <select name="group" id="group" onchange="this.form.submit()">
+                        {% for group in groups %}
+                            <option value="{{ group.id }}"
+                                {% if selected_group and selected_group.id == group.id %}selected{% endif %}>
+                                {{ group.Group }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group attendance-filter-group">
+                    <label for="lesson_date">Дата занятия</label>
+                    <select name="lesson_date" id="lesson_date" onchange="this.form.submit()">
+                        {% for lesson_date in lesson_dates %}
+                            <option value="{{ lesson_date|date:'Y-m-d' }}"
+                                {% if selected_lesson_date and selected_lesson_date|date:'Y-m-d' == lesson_date|date:'Y-m-d' %}selected{% endif %}>
+                                {{ lesson_date|date:"d.m.Y" }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group attendance-filter-group large-filter">
+                    <label for="schedule">Время / занятие</label>
+                    <select name="schedule" id="schedule" onchange="this.form.submit()">
+                        {% for schedule in teacher_schedules %}
+                            <option value="{{ schedule.id }}"
+                                {% if selected_schedule and selected_schedule.id == schedule.id %}selected{% endif %}>
+                                {{ schedule.LectureID.SubjectID.Subject }} |
+                                {{ schedule.get_DayOfWeek_display }} |
+                                {{ schedule.StartTime|time:"H:i" }} - {{ schedule.EndTime|time:"H:i" }} |
+                                ауд. {{ schedule.Room }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+        </form>
+
+        {% if selected_schedule and selected_lesson_date %}
+            <div class="journal-info attendance-info">
+                <p><strong>Семестр:</strong> {{ selected_semester }}</p>
+                <p><strong>Предмет:</strong> {{ selected_schedule.LectureID.SubjectID.Subject }}</p>
+                <p><strong>Группа:</strong> {{ selected_schedule.LectureID.GroupID.Group }}</p>
+                <p><strong>Дата:</strong> {{ selected_lesson_date|date:"d.m.Y" }}</p>
+                <p><strong>Время:</strong> {{ selected_schedule.StartTime|time:"H:i" }} - {{ selected_schedule.EndTime|time:"H:i" }}</p>
+                <p><strong>Аудитория:</strong> {{ selected_schedule.Room }}</p>
+                <p><strong>Тип занятия:</strong> {{ selected_schedule.LessonType }}</p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="semester" value="{{ selected_semester }}">
+                <input type="hidden" name="group_id" value="{{ selected_group.id }}">
+                <input type="hidden" name="schedule_id" value="{{ selected_schedule.id }}">
+                <input type="hidden" name="lesson_date" value="{{ selected_lesson_date|date:'Y-m-d' }}">
+
+                <div class="attendance-table-wrapper">
+                    <table class="attendance-matrix single-date-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>ФИО</th>
+                                <th>Группа</th>
+                                <th>Дата</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for row in table_rows %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="student-name-cell">
+                                        {{ row.student.Student }} {{ row.student.Name }}
+                                    </td>
+                                    <td>{{ row.student.GroupID.Group }}</td>
+                                    <td>{{ row.date|date:"d.m.Y" }}</td>
+                                    <td>
+                                        <select
+                                            name="status_{{ row.student.id }}_{{ row.date|date:'Y-m-d' }}"
+                                            class="attendance-select
+                                            {% if row.status == 'present' %}status-present{% endif %}
+                                            {% if row.status == 'absent' %}status-absent{% endif %}
+                                            {% if row.status == 'late' %}status-late{% endif %}">
+                                            <option value="" {% if not row.status %}selected{% endif %}>—</option>
+                                            <option value="present" {% if row.status == 'present' %}selected{% endif %}> Присутствовал</option>
+                                            <option value="absent" {% if row.status == 'absent' %}selected{% endif %}> Отсутствовал</option>
+                                            <option value="late" {% if row.status == 'late' %}selected{% endif %}> Опоздал</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                            {% if table_rows %}
+                            <tr class="total-row">
+                                <td colspan="4"><strong>Количество присутствующих</strong></td>
+                                <td><strong>{{ totals.0 }}</strong></td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="journal-actions attendance-actions">
+                    <button type="submit">Сохранить посещаемость</button>
+                </div>
+            </form>
+        {% endif %}
+    {% else %}
+        <p class="empty-text">У вас пока нет назначенных занятий в выбранном семестре.</p>
+    {% endif %}
+</div>
+
+<style>
+.attendance-card {
+    border: 1px solid #e5e7eb;
+}
+
+.attendance-filters {
+    margin-bottom: 20px;
+}
+
+.attendance-filters-row {
+    align-items: stretch;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.attendance-filter-group {
+    min-width: 220px;
+}
+
+.large-filter {
+    min-width: 340px;
+}
+
+.attendance-info {
+    margin-bottom: 20px;
+    padding: 16px 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+.attendance-info p {
+    margin: 6px 0;
+    color: #1f2937;
+}
+
+.attendance-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.attendance-matrix {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+.attendance-matrix th,
+.attendance-matrix td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: center;
+    color: #1f2937;
+}
+
+.attendance-matrix thead th {
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-weight: 700;
+}
+
+.attendance-matrix tbody tr:hover td {
+    background: #f9fafb;
+}
+
+.student-name-cell {
+    text-align: left !important;
+    font-weight: 600;
+}
+
+.attendance-select {
+    min-width: 170px;
+    height: 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    cursor: pointer;
+    outline: none;
+    padding: 0 10px;
+}
+
+.attendance-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.status-present {
+    color: #166534;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.status-absent {
+    color: #b91c1c;
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+.status-late {
+    color: #b45309;
+    background: #fffbeb;
+    border-color: #fde68a;
+}
+
+.total-row td {
+    background: #f8fafc !important;
+    font-weight: 700;
+}
+
+.attendance-actions {
+    margin-top: 20px;
+}
+
+.attendance-actions button {
+    min-width: 240px;
+}
+
+.empty-text {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    .attendance-filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .attendance-filter-group,
+    .large-filter {
+        min-width: 100%;
+    }
+
+    .attendance-select {
+        min-width: 100%;
+    }
+}
+</style>
+{% endblock %}
